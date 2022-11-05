@@ -1,0 +1,64 @@
+[project]
+name = "pyllelic-web"
+authors = [{name = "Andrew J. Bonham", email = "bonham@gmail.com"}]
+readme = "README.md"
+description = "Web frontend for pyllelic bisulfite DNA analysis."
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+classifiers = [
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3 :: Only",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent",
+]
+dependencies = [
+        "pandas",
+        "numpy",
+        "scipy",
+        "plotly",
+        "xlsxwriter",
+        "xlrd",
+        "openpyxl",
+        "tqdm",
+        "pysam",
+        "biopython",
+        "seaborn",
+        "dash",
+        "dash-bootstrap-components",
+]
+keywords = ["genomics", "methylation", "DNA sequencing"]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/Paradoxdruid/pyllelic-web"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "pytest",
+    "pytest-mock",
+    "mypy",
+]
+
+[tool.setuptools]
+packages = ["pyllelic-web"]
+
+[tool.setuptools.dynamic]
+version = "0.1.0"  # {attr = "pyllelic-web.__version__"}
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.mypy]
+ignore_missing_imports = true
+strict = true
+files = "pyllelic-web/*.py"
+
+[tool.isort]
+profile = "black"
