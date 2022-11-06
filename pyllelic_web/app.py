@@ -38,7 +38,15 @@ app.layout = dbc.Container(
             class_name=PADDING,
         ),
         dbc.Row(
-            dbc.Col(dbc.Button("Generate", id="submit-button", n_clicks=0)),
+            dbc.Col(
+                dbc.Button(
+                    "Generate",
+                    color="primary",
+                    id="submit-button",
+                    class_name="me-1",
+                    n_clicks=0,
+                )
+            ),
             class_name=PADDING,
         ),
         dbc.Row(dbc.Col(html.Div(id="output-div"))),
@@ -51,16 +59,17 @@ app.layout = dbc.Container(
     Output(component_id="output-div", component_property="children"),
     [Input("submit-button", "n_clicks")],
 )  # type: ignore[misc]
-def generate_graphs(n_clicks: int) -> html.Div:
+def generate_graphs(n_clicks: int) -> dbc.Container:
 
     if n_clicks == 0:
         return html.Div()
 
-    else:  # TODO: Add data memoization
+    else:
 
         table, heatmap, reads_graph = run_pyllelic_and_graph()
 
-        return html.Div(
+        return dbc.Container(
+            class_name="border border-primary rounded",
             children=[
                 dbc.Row(
                     dbc.Col(
@@ -76,5 +85,5 @@ def generate_graphs(n_clicks: int) -> html.Div:
                     dbc.Col(dcc.Graph(figure=heatmap), width={"offset": 1, "width": 6})
                 ),
                 dbc.Row(dbc.Col(dcc.Graph(figure=reads_graph))),
-            ]
+            ],
         )

@@ -1,6 +1,6 @@
 """Data processing and visualization for pyllelic-web"""
 
-from functools import partialmethod
+from functools import lru_cache, partialmethod
 from typing import Tuple
 
 from dash import dash_table
@@ -13,6 +13,7 @@ tqdm.__init__ = partialmethod(
 )  # Suppress progress bars in console output
 
 
+@lru_cache
 def run_pyllelic_and_graph() -> Tuple[dash_table.DataTable, Figure, Figure]:
     # ----------------- Sample Data Loading ---------------------
 
