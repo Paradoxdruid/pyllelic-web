@@ -5,7 +5,31 @@ from dash import html
 
 TITLE = html.H4("Pyllelic-Web")
 
-THEME = dbc.themes.FLATLY
+THEME = dbc.themes.SIMPLEX
+
+PADDING = "py-3"
+
+NAVBAR = dbc.NavbarSimple(
+    children=[
+        # dbc.NavItem(dbc.NavLink("Page 1", href="#")),
+        dbc.DropdownMenu(
+            children=[
+                dbc.DropdownMenuItem("Actions", header=True),
+                dbc.DropdownMenuItem("Action 1", href="#"),
+                dbc.DropdownMenuItem("Action 2", href="#"),
+            ],
+            nav=True,
+            in_navbar=True,
+            label="Actions",
+        ),
+    ],
+    brand="Pyllelic-Web",
+    brand_href="#",
+    color="primary",
+    dark=True,
+    fluid=True,
+    class_name="pb-3",
+)
 
 FOOTER = dbc.Row(
     children=[

@@ -9,7 +9,7 @@ from dash import dash_table, dcc, html
 from pyllelic import pyllelic, visualization
 from tqdm import tqdm
 
-from pyllelic_web.layout import FOOTER, THEME, TITLE
+from pyllelic_web.layout import FOOTER, NAVBAR, PADDING, THEME, TITLE
 
 tqdm.__init__ = partialmethod(
     tqdm.__init__, disable=True
@@ -82,8 +82,12 @@ reads_graph = visualization._make_stacked_plotly_fig(data.individual_data)
 app.layout = dbc.Container(
     fluid=True,
     children=[
-        dbc.Row(dbc.Col(TITLE)),
-        dbc.Row(dbc.Col(html.P(f"Pyllelic output of {cell_line} test data."))),
+        NAVBAR,
+        # dbc.Row(dbc.Col(TITLE)),
+        dbc.Row(
+            dbc.Col(html.P(f"Pyllelic output of {cell_line} test data.")),
+            class_name=PADDING,
+        ),
         dbc.Row(dbc.Col(list_all_files("./assets/test"))),
         dbc.Row(
             dbc.Col(
@@ -97,6 +101,6 @@ app.layout = dbc.Container(
         dbc.Row(dbc.Col(table, width={"offset": 0, "size": 7})),
         dbc.Row(dbc.Col(dcc.Graph(figure=heatmap), width={"offset": 1, "width": 6})),
         dbc.Row(dbc.Col(dcc.Graph(figure=reads_graph))),
-        dbc.Row(dbc.CardFooter(FOOTER)),
+        dbc.Row(dbc.CardFooter(FOOTER), class_name=PADDING),
     ],
 )
