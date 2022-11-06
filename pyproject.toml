@@ -43,7 +43,7 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["pyllelic-web"]
+packages = ["pyllelic_web"]
 
 [tool.setuptools.dynamic]
 version = "0.1.0"  # {attr = "pyllelic-web.__version__"}

@@ -1,6 +1,7 @@
 """Web frontend for pyllelic bisulfite DNA analysis."""
 
 from functools import partialmethod
+from pathlib import Path
 
 import dash
 import dash_bootstrap_components as dbc
@@ -20,6 +21,18 @@ app = dash.Dash(__name__, external_stylesheets=[THEME])
 app.title = "Pyllelic-Web"
 server = app.server
 layout_title = TITLE
+
+# ---------------- Helper Functions --------------------------
+
+
+def list_all_files(folder_name: str) -> html.Ul:
+    my_dir = Path(folder_name)
+    files = my_dir.glob("*.bam")
+    file_names = [each.stem for each in files]
+    file_list = html.Ul([html.Li(file) for file in file_names])
+
+    return file_list
+
 
 # ----------------- Sample Data Loading ---------------------
 
@@ -71,6 +84,7 @@ app.layout = dbc.Container(
     children=[
         dbc.Row(dbc.Col(TITLE)),
         dbc.Row(dbc.Col(html.P(f"Pyllelic output of {cell_line} test data."))),
+        dbc.Row(dbc.Col(list_all_files("./assets/test"))),
         dbc.Row(
             dbc.Col(
                 html.P(
