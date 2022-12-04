@@ -1,6 +1,7 @@
 """Web frontend for pyllelic bisulfite DNA analysis."""
 
 from pathlib import Path
+from typing import Dict, Union
 
 import dash
 import dash_bootstrap_components as dbc
@@ -26,6 +27,19 @@ def list_all_files(folder_name: str) -> html.Ul:
 
     return file_list
 
+
+# ---------------- Temporary Fixed Files for Testing ---------
+
+CONFIG_OPTIONS: Dict[str, Union[str, int]] = {
+    "base_path": "./assets/",
+    "prom_file": "tert_genome.txt",
+    "prom_start": 1293200,
+    "prom_end": 1296000,
+    "chrom": "5",
+    "offset": 1293000,
+    "viz_backend": "plotly",
+    "test_dir": "test",
+}
 
 # ----------------- Main layout -----------------------------
 
@@ -66,7 +80,7 @@ def generate_graphs(n_clicks: int) -> dbc.Container:
 
     else:
 
-        table, heatmap, reads_graph = run_pyllelic_and_graph()
+        table, heatmap, reads_graph = run_pyllelic_and_graph(CONFIG_OPTIONS)
 
         return dbc.Container(
             class_name="border border-primary rounded",

@@ -1,7 +1,7 @@
 """Data processing and visualization for pyllelic-web"""
 
-from functools import lru_cache, partialmethod
-from typing import Tuple
+from functools import lru_cache, partialmethod, wraps
+from typing import Any, Callable, Dict, Tuple, Union
 
 from dash import dash_table
 from plotly.graph_objects import Figure
@@ -13,24 +13,34 @@ tqdm.__init__ = partialmethod(
 )  # Suppress progress bars in console output
 
 
+def hash_dict(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
+    """Transform mutable dictionnary into immutable.
+    Useful to be compatible with lru_cache
+    See https://stackoverflow.com/questions/6358481/
+    """
+
+    class HDict(dict):  # type:ignore[type-arg]
+        def __hash__(self) -> int:  # type:ignore[override]
+            return hash(frozenset(self.items()))
+
+    @wraps(func)
+    def wrapped(*args: Any, **kwargs: Any) -> Any:
+        args = tuple([HDict(arg) if isinstance(arg, dict) else arg for arg in args])
+        kwargs = {k: HDict(v) if isinstance(v, dict) else v for k, v in kwargs.items()}
+        return func(*args, **kwargs)
+
+    return wrapped
+
+
+@hash_dict
 @lru_cache
-def run_pyllelic_and_graph() -> Tuple[dash_table.DataTable, Figure, Figure]:
-    # ----------------- Sample Data Loading ---------------------
+def run_pyllelic_and_graph(
+    OPTIONS: Dict[str, Union[str, int]],
+) -> Tuple[dash_table.DataTable, Figure, Figure]:
+    # ----------------- Data Loading -----------------------------
+    config = pyllelic.configure(**OPTIONS)
 
     # See https://paradoxdruid.github.io/pyllelic/
-
-    config = pyllelic.configure(  # Specify file and directory locations
-        base_path="./assets/",
-        prom_file="tert_genome.txt",
-        prom_start=1293200,
-        prom_end=1296000,
-        chrom="5",
-        offset=1293000,  # start position of retrieved promoter sequence
-        viz_backend="plotly",
-        # fname_pattern=r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$",
-        test_dir="test",
-        # results_dir="results",
-    )
 
     files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
 
