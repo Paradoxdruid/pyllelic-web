@@ -1,35 +1,18 @@
 """Data processing and visualization for pyllelic-web"""
 
-from functools import lru_cache, partialmethod, wraps
-from typing import Any, Callable, Dict, Tuple, Union
+from functools import lru_cache, partialmethod
+from typing import Dict, Tuple, Union
 
 from dash import dash_table
 from plotly.graph_objects import Figure
 from pyllelic import pyllelic, visualization
 from tqdm import tqdm
 
+from pyllelic_web.utils import hash_dict
+
 tqdm.__init__ = partialmethod(
     tqdm.__init__, disable=True
 )  # Suppress progress bars in console output
-
-
-def hash_dict(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
-    """Transform mutable dictionnary into immutable.
-    Useful to be compatible with lru_cache
-    See https://stackoverflow.com/questions/6358481/
-    """
-
-    class HDict(dict):  # type:ignore[type-arg]
-        def __hash__(self) -> int:  # type:ignore[override]
-            return hash(frozenset(self.items()))
-
-    @wraps(func)
-    def wrapped(*args: Any, **kwargs: Any) -> Any:
-        args = tuple([HDict(arg) if isinstance(arg, dict) else arg for arg in args])
-        kwargs = {k: HDict(v) if isinstance(v, dict) else v for k, v in kwargs.items()}
-        return func(*args, **kwargs)
-
-    return wrapped
 
 
 @hash_dict
