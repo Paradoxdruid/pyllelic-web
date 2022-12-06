@@ -1,6 +1,5 @@
 """Web frontend for pyllelic bisulfite DNA analysis."""
 
-from pathlib import Path
 from typing import Dict, Union
 
 import dash
@@ -17,15 +16,6 @@ app.title = "Pyllelic-Web"
 server = app.server
 
 # ---------------- Helper Functions --------------------------
-
-
-def list_all_files(folder_name: str) -> html.Ul:
-    my_dir = Path(folder_name)
-    files = my_dir.glob("*.bam")
-    file_names = [each.stem for each in files]
-    file_list = html.Ul([html.Li(file) for file in file_names])
-
-    return file_list
 
 
 # ---------------- Temporary Fixed Files for Testing ---------

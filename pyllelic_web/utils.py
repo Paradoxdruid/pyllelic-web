@@ -1,7 +1,10 @@
 """Utility functions for pyllelic-web"""
 
 from functools import wraps
+from pathlib import Path
 from typing import Any, Callable
+
+from dash import html
 
 
 def hash_dict(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
@@ -21,3 +24,12 @@ def hash_dict(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
         return func(*args, **kwargs)
 
     return wrapped
+
+
+def list_all_files(folder_name: str) -> html.Ul:
+    my_dir = Path(folder_name)
+    files = my_dir.glob("*.bam")
+    file_names = [each.stem for each in files]
+    file_list = html.Ul([html.Li(file) for file in file_names])
+
+    return file_list
