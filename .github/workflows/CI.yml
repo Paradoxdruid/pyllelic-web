@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pytest pytest-mock biopython<=1.79 pandas dash pyllelic dash_bootstrap_components
+          python -m pip install pytest pytest-mock biopython==1.79 pandas dash pyllelic dash_bootstrap_components
 
       - name: Test with pytest
         run: |
