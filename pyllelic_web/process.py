@@ -20,17 +20,37 @@ tqdm.__init__ = partialmethod(
 def run_pyllelic_and_graph(
     OPTIONS: Dict[str, Union[str, int]],
 ) -> Tuple[dash_table.DataTable, Figure, Figure]:
+
+    data: pyllelic.GenomicPositionData = _run_pyllelic(OPTIONS)
+
+    table: dash_table.DataTable
+    heatmap: Figure
+    reads_graph: Figure
+
+    table, heatmap, reads_graph = _create_graphs(data)
+
+    return (table, heatmap, reads_graph)
+
+
+def _run_pyllelic(OPTIONS: Dict[str, Union[str, int]]) -> pyllelic.GenomicPositionData:
     # ----------------- Data Loading -----------------------------
-    config = pyllelic.configure(**OPTIONS)
+    config: pyllelic.Config = pyllelic.configure(**OPTIONS)
 
     # See https://paradoxdruid.github.io/pyllelic/
 
     files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
 
     # Run pyllelic; make take some time depending on number of bam files
-    data = pyllelic.pyllelic(config=config, files_set=files_set)
+    data: pyllelic.GenomicPositionData = pyllelic.pyllelic(
+        config=config, files_set=files_set
+    )
 
-    # ------------------- Making Graphs and Output ---------------
+    return data
+
+
+def _create_graphs(
+    data: pyllelic.GenomicPositionData,
+) -> Tuple[dash_table.DataTable, Figure, Figure]:
 
     table = dash_table.DataTable(
         data.means.to_dict("records"),
@@ -38,7 +58,7 @@ def run_pyllelic_and_graph(
         style_table={"overflowX": "auto"},
     )
 
-    heatmap = visualization._create_heatmap(
+    heatmap: Figure = visualization._create_heatmap(
         data.means,
         min_values=1,
         width=600,
@@ -47,6 +67,6 @@ def run_pyllelic_and_graph(
         backend="plotly",
     )
 
-    reads_graph = visualization._make_stacked_plotly_fig(data.individual_data)
+    reads_graph: Figure = visualization._make_stacked_plotly_fig(data.individual_data)
 
     return (table, heatmap, reads_graph)
