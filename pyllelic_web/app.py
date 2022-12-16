@@ -43,10 +43,10 @@ app.layout = dbc.Container(
     Output(component_id="output-div", component_property="children"),
     [Input("submit-button", "n_clicks")],
 )  # type: ignore[misc]
-def generate_graphs(n_clicks: int) -> Union[dbc.Container, html.Div]:
+def generate_graphs(n_clicks: int) -> dbc.Container:
 
     if n_clicks == 0:
-        return html.Div()
+        return dbc.Container(html.Div())
 
     else:
 
