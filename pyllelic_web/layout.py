@@ -9,6 +9,16 @@ THEME = dbc.themes.SIMPLEX
 
 PADDING = "py-3"
 
+SUBMIT_BUTTON = dbc.Col(
+    dbc.Button(
+        "Generate",
+        color="primary",
+        id="submit-button",
+        class_name="me-1",
+        n_clicks=0,
+    )
+)
+
 NAVBAR = dbc.NavbarSimple(
     children=[
         # dbc.NavItem(dbc.NavLink("Page 1", href="#")),

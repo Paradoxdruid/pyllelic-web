@@ -4,9 +4,10 @@ from typing import Dict, Union
 
 import dash
 import dash_bootstrap_components as dbc
+import dash_uploader
 from dash import Input, Output, dcc, html
 
-from pyllelic_web.layout import FOOTER, NAVBAR, PADDING, THEME
+from pyllelic_web.layout import FOOTER, NAVBAR, PADDING, SUBMIT_BUTTON, THEME
 from pyllelic_web.process import run_pyllelic_and_graph
 
 # ----------------- Initialize App --------------------------
@@ -15,10 +16,9 @@ app = dash.Dash(__name__, external_stylesheets=[THEME])
 app.title = "Pyllelic-Web"
 server = app.server
 
-# ---------------- Helper Functions --------------------------
-
-
 # ---------------- Temporary Fixed Files for Testing ---------
+
+dash_uploader.configure_upload(app, "/tmp")
 
 CONFIG_OPTIONS: Dict[str, Union[str, int]] = {
     "base_path": "./assets/",
@@ -41,18 +41,9 @@ app.layout = dbc.Container(
             dbc.Col(html.P("Pyllelic output of test data.")),
             class_name=PADDING,
         ),
-        dbc.Row(
-            dbc.Col(
-                dbc.Button(
-                    "Generate",
-                    color="primary",
-                    id="submit-button",
-                    class_name="me-1",
-                    n_clicks=0,
-                )
-            ),
-            class_name=PADDING,
-        ),
+        dbc.Row(dash_uploader.Upload(id="dash-uploader")),
+        dbc.Row(SUBMIT_BUTTON, class_name=PADDING),
+        dbc.Row(dbc.Col(html.Div(id="callback-output"))),
         dbc.Row(dbc.Col(html.Div(id="output-div"))),
         dbc.Row(dbc.CardFooter(FOOTER), class_name=PADDING),
     ],
@@ -63,7 +54,7 @@ app.layout = dbc.Container(
     Output(component_id="output-div", component_property="children"),
     [Input("submit-button", "n_clicks")],
 )  # type: ignore[misc]
-def generate_graphs(n_clicks: int) -> dbc.Container:
+def generate_graphs(n_clicks: int) -> Union[dbc.Container, html.Div]:
 
     if n_clicks == 0:
         return html.Div()
@@ -91,3 +82,11 @@ def generate_graphs(n_clicks: int) -> dbc.Container:
                 dbc.Row(dbc.Col(dcc.Graph(figure=reads_graph))),
             ],
         )
+
+
+@dash_uploader.callback(
+    output=Output("callback-output", "children"),
+    id="dash-uploader",
+)  # type: ignore[misc]
+def callback_on_completion(status: dash_uploader.UploadStatus) -> html.Ul:
+    return html.Ul([html.Li(str(a_file)) for a_file in status.uploaded_files])
