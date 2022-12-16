@@ -1,7 +1,5 @@
 """Unit tests for pyllelic_web.app"""
 
-from dash import html
-
 from pyllelic_web.app import generate_graphs
 
 from .inputs import EXPECTED_APP_OUTPUT
@@ -9,11 +7,11 @@ from .inputs import EXPECTED_APP_OUTPUT
 
 def test_generate_graphs_zero() -> None:
 
-    EXPECTED = html.Div()
+    EXPECTED = "Container(Div(None))"
 
     actual = generate_graphs(n_clicks=0)
 
-    assert repr(actual) == repr(EXPECTED)
+    assert repr(actual) == EXPECTED
 
 
 def test_generate_graphs() -> None:
